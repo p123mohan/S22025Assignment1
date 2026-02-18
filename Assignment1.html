@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIS assignment · EEZG 612 (single page)</title>
+    <!-- pdf generation library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- minimal style -->
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        body {
+            background: #eef2f5;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px 10px;
+        }
+        .card {
+            max-width: 880px;
+            width: 100%;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0,20,30,0.15);
+            padding: 35px 40px;
+            transition: 0.2s;
+        }
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 500;
+            color: #0b3b4b;
+            margin-top: 0.2rem;
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.5px;
+            border-left: 8px solid #1e7e83;
+            padding-left: 22px;
+        }
+        .subhead {
+            color: #2f5c6b;
+            margin-left: 30px;
+            margin-bottom: 30px;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 1.1rem;
+        }
+        .section-title {
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: #174f5c;
+            margin: 30px 0 18px 0;
+            border-bottom: 2px solid #bdd8de;
+            padding-bottom: 6px;
+        }
+        .field-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+            gap: 20px 25px;
+        }
+        .field {
+            margin-bottom: 10px;
+        }
+        label {
+            font-weight: 500;
+            color: #1b5f6b;
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #cbdbe0;
+            border-radius: 18px;
+            font-size: 1rem;
+            background: #fbfdfe;
+            transition: 0.15s;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: #2b9caa;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 5px rgba(38,151,163,0.1);
+        }
+        .geo-yes-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .geo-yes-group input[type="radio"] {
+            width: auto;
+            margin-right: 4px;
+        }
+        .geo-yes-group label {
+            display: inline;
+            margin-right: 15px;
+            font-weight: 400;
+        }
+        .conditional {
+            background: #f3f9fb;
+            border-radius: 24px;
+            padding: 22px 22px 18px 22px;
+            margin: 18px 0 8px 0;
+            border: 1px solid #c4e2e8;
+        }
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+        .flex-row .field {
+            flex: 1 1 170px;
+        }
+        .gpkg-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            background: #f2f7f9;
+            padding: 18px 18px 8px 18px;
+            border-radius: 26px;
+            margin: 10px 0;
+        }
+        .gpkg-item {
+            flex: 1 1 200px;
+        }
+        .gpkg-item label {
+            font-size: 0.9rem;
+        }
+        .drive-hint {
+            font-size: 0.8rem;
+            color: #3d6e79;
+            margin-top: 3px;
+            word-break: break-all;
+        }
+        .file-upload-box {
+            background: #f1f7f9;
+            border-radius: 24px;
+            padding: 18px 22px;
+            border: 2px dashed #5fa3b0;
+            margin: 10px 0 5px 0;
+        }
+        .file-upload-box label {
+            font-weight: 600;
+            color: #0b4d59;
+            margin-bottom: 12px;
+        }
+        .file-info {
+            font-size: 0.85rem;
+            color: #2d6773;
+            margin-top: 8px;
+            word-break: break-word;
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin: 40px 0 15px;
+            gap: 18px;
+        }
+        .btn {
+            background: #176d7a;
+            border: none;
+            color: white;
+            padding: 16px 34px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 6px 12px rgba(17,94,105,0.3);
+            transition: all 0.15s;
+            border: 1px solid rgba(255,255,255,0.2);
+            letter-spacing: 0.3px;
+        }
+        .btn:hover {
+            background: #1c8b9c;
+            transform: translateY(-3px);
+            box-shadow: 0 14px 24px rgba(17,94,105,0.3);
+        }
+        .btn-outline {
+            background: white;
+            color: #176d7a;
+            border: 2px solid #176d7a;
+            box-shadow: none;
+        }
+        .btn-outline:hover {
+            background: #e0f2f5;
+            transform: translateY(-2px);
+        }
+        .small-note {
+            font-size: 0.9rem;
+            color: #4b6f7a;
+            background: #f2f7f9;
+            padding: 12px 22px;
+            border-radius: 40px;
+        }
+        .mark-15 {
+            background: #fdedd3;
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            color: #aa6429;
+            border: 1px solid #f1c38e;
+        }
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #67949e;
+        }
+        .loader {
+            display: none;
+            margin-left: 15px;
+            border: 3px solid #e0f0f3;
+            border-top: 3px solid #176d7a;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .pdf-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>🛰️ EEZG 612 · Environmental Remote Sensing & GIS</h1>
+    <div class="subhead">Assignment 1 – Submit this PDF in Taxila Portal</div>
+
+    <div id="formContainer">
+        <div class="section-title">✏️ 1. Entries</div>
+        <div class="field-grid">
+            <div class="field"><label>Full name</label> <input type="text" id="fullName" placeholder="e.g. Aditya "></div>
+            <div class="field"><label>ID number</label> <input type="text" id="idNumber" placeholder="2025ht0000"></div>
+            <div class="field"><label>Email</label> <input type="email" id="email" placeholder="student@wilp.bits-pilani.ac.in"></div>
+            <div class="field"><label>Phone number (optional)</label> <input type="tel" id="phone" placeholder="+91 8464050703"></div>
+        </div>
+
+        <div class="section-title">🗺️ 2. Georeference & metrics</div>
+        <div class="field">
+            <label>Whether the file reprojected?</label>
+            <div class="geo-yes-group">
+                <span><input type="radio" name="geoRef" id="geoYes" value="yes" checked> <label for="geoYes" style="display:inline">Yes</label></span>
+                <span><input type="radio" name="geoRef" id="geoNo" value="no"> <label for="geoNo" style="display:inline">No</label></span>
+            </div>
+        </div>
+
+        <div class="conditional" id="geodataConditional">
+            <div class="flex-row">
+                <div class="field"><label>UTM zone number</label> <input type="text" id="utmZone" placeholder="e.g. 43N"></div>
+                <div class="field"><label>Total area water (km²)</label> <input type="text" id="waterArea" placeholder="e.g. 2.56"></div>
+                <div class="field"><label>Total road length (km)</label> <input type="text" id="roadLength" placeholder="e.g. 15.8"></div>
+                <div class="field"><label>Number of point features</label> <input type="text" id="pointCount" placeholder="e.g. 122"></div>
+            </div>
+        </div>
+
+        <div class="section-title">🔗 3. Drive links (.gpkg files)</div>
+        <div class="gpkg-row">
+            <div class="gpkg-item"><label>📍 Point feature (.gpkg)</label> <input type="url" id="pointLink" placeholder="https://drive.google.com/..."></div>
+            <div class="gpkg-item"><label>📐 Line feature (.gpkg)</label> <input type="url" id="lineLink" placeholder="https://drive.google.com/..."></div>
+            <div class="gpkg-item"><label>🗺️ Polygon feature (.gpkg)</label> <input type="url" id="polygonLink" placeholder="https://drive.google.com/..."></div>
+        </div>
+        <div class="drive-hint">ⓘ Paste direct Google Drive share links (anyone with link)</div>
+
+        <div class="section-title">📸 4. Work screenshot (embedded)</div>
+        <div class="file-upload-box">
+            <label for="screenshotUpload">Choose screenshot (PNG or JPG)</label>
+            <input type="file" id="screenshotUpload" accept="image/png, image/jpeg, image/jpg">
+            <div class="file-info" id="uploadStatus">No file chosen</div>
+            <div style="font-size:0.85rem; margin-top:10px;">🖼️ Image will be scaled to fit one page.</div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; margin: 15px 0;">
+            <span class="mark-15">⚖️ Weightage 15 Marks</span>
+        </div>
+
+        <div class="btn-group">
+            <div class="pdf-progress">
+                <button class="btn" id="generatePdfBtn">📄 GENERATE SINGLE‑PAGE PDF</button>
+                <div class="loader" id="loadingSpinner"></div>
+            </div>
+            <button class="btn btn-outline" id="clearBtn" type="button">⟲ Clear fields</button>
+        </div>
+        <div class="small-note">
+            ⚡ Make Sure that your links are given access, so that the instructor can download the files.
+        </div> 
+    </div>
+    <footer>EEZG 612  Assignment 1</footer>
+</div>
+
+<script>
+    (function() {
+        const geoYes = document.getElementById('geoYes');
+        const geoNo = document.getElementById('geoNo');
+        const conditionalDiv = document.getElementById('geodataConditional');
+        const fileInput = document.getElementById('screenshotUpload');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const spinner = document.getElementById('loadingSpinner');
+        const generateBtn = document.getElementById('generatePdfBtn');
+
+        function toggleGeoConditional() {
+            conditionalDiv.style.display = geoYes.checked ? 'block' : 'none';
+        }
+        geoYes.addEventListener('change', toggleGeoConditional);
+        geoNo.addEventListener('change', toggleGeoConditional);
+        toggleGeoConditional();
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                uploadStatus.textContent = `📎 Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+            } else {
+                uploadStatus.textContent = 'No file chosen';
+            }
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            document.getElementById('fullName').value = '';
+            document.getElementById('idNumber').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('utmZone').value = '';
+            document.getElementById('waterArea').value = '';
+            document.getElementById('roadLength').value = '';
+            document.getElementById('pointCount').value = '';
+            document.getElementById('pointLink').value = '';
+            document.getElementById('lineLink').value = '';
+            document.getElementById('polygonLink').value = '';
+            fileInput.value = '';
+            uploadStatus.textContent = 'No file chosen';
+            geoYes.checked = true;
+            geoNo.checked = false;
+            toggleGeoConditional();
+        });
+
+        // ---------- SINGLE‑PAGE PDF (everything compact) ----------
+        generateBtn.addEventListener('click', async function() {
+            spinner.style.display = 'inline-block';
+            generateBtn.disabled = true;
+
+            try {
+                // collect fields
+                const name = document.getElementById('fullName').value.trim() || '[not provided]';
+                const id = document.getElementById('idNumber').value.trim() || '[not provided]';
+                const email = document.getElementById('email').value.trim() || '[not provided]';
+                const phone = document.getElementById('phone').value.trim() || '[not provided]';
+                const geoStatus = geoYes.checked ? 'Yes' : 'No';
+
+                const utm = document.getElementById('utmZone').value.trim() || '—';
+                const water = document.getElementById('waterArea').value.trim() || '—';
+                const roads = document.getElementById('roadLength').value.trim() || '—';
+                const points = document.getElementById('pointCount').value.trim() || '—';
+
+                const pointLink = document.getElementById('pointLink').value.trim() || '—';
+                const lineLink = document.getElementById('lineLink').value.trim() || '—';
+                const polygonLink = document.getElementById('polygonLink').value.trim() || '—';
+
+                const today = new Date();
+                const dateStr = `${today.getDate()} ${today.toLocaleString('default', { month: 'short' })} ${today.getFullYear()}`;
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+                const margin = 15;
+                let y = 15;          // start near top
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const maxWidth = pageWidth - 2 * margin;
+
+                // helper (compact line spacing)
+                function writeLine(text, fontSize = 10, indent = 0, isBold = false) {
+                    doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+                    doc.setFontSize(fontSize);
+                    const split = doc.splitTextToSize(text, maxWidth - indent);
+                    doc.text(split, margin + indent, y);
+                    y += split.length * (fontSize * 0.33) + 1.2;   // tighter
+                }
+
+                // ----- HEADER (smaller) -----
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(10, 50, 70);
+                doc.text('EEZG 612 Env. Remote Sensing and GIS assignment-1', margin, y);
+                y += 6;
+
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(30, 70, 80);
+                doc.text(`Instructor: Dr. Prakash Mohan M M`, margin, y);
+                y += 5;
+                doc.text(`Date: ${dateStr}`, margin, y);
+                y += 6;
+
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(150, 80, 20);
+                doc.text('Weightage: 15 Marks', margin, y);
+                y += 7;
+                doc.setTextColor(20, 20, 20);
+
+                // ----- 1. PERSONAL (compact) -----
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('1. PERSONAL DETAILS', margin, y);
+                y += 4.5;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9.5);
+                writeLine(`Name         : ${name}`, 9.5, 2);
+                writeLine(`ID           : ${id}`, 9.5, 2);
+                writeLine(`Email        : ${email}`, 9.5, 2);
+                writeLine(`Phone        : ${phone}`, 9.5, 2);
+                y += 1;
+
+                // ----- 2. GEOSPATIAL -----
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('2. GEOSPATIAL METRICS', margin, y);
+                y += 4.5;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9.5);
+                writeLine(`Reprojected? : ${geoStatus}`, 9.5, 2);
+                if (geoYes.checked) {
+                    writeLine(`UTM zone        : ${utm}`, 9.5, 4);
+                    writeLine(`Water area      : ${water} km²`, 9.5, 4);
+                    writeLine(`Road length     : ${roads} km`, 9.5, 4);
+                    writeLine(`Point features  : ${points}`, 9.5, 4);
+                } else {
+                    writeLine(`(not reprojecte)`, 9.5, 4);
+                }
+                y += 1;
+
+                // ----- 3. DRIVE LINKS (plain text, no emoji) -----
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('3. GOOGLE DRIVE LINKS (.gpkg)', margin, y);
+                y += 4.5;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9);
+                writeLine(`- Point file   : ${pointLink}`, 9, 2);
+                writeLine(`- Line file    : ${lineLink}`, 9, 2);
+                writeLine(`- Polygon file : ${polygonLink}`, 9, 2);
+                y += 1;
+
+                // ----- 4. SCREENSHOT (with filename) -----
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('4. WORK SCREENSHOT', margin, y);
+                y += 4.5;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9);
+
+                const file = fileInput.files[0];
+                if (file) {
+                    writeLine(`Uploaded: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`, 9, 2);
+                    y += 1;
+
+                    // embed image (try to fit remaining space)
+                    const base64 = await readFileAsDataURL(file);
+                    const img = await getImageDimensions(base64);
+
+                    // available height from current y to ~270 (leave footer space)
+                    const maxAvailableHeight = 270 - y;
+                    // aim for image width = 140 mm, but constrain by height
+                    let imgWidth = 140;
+                    let imgHeight = (img.height / img.width) * imgWidth;
+
+                    if (imgHeight > maxAvailableHeight) {
+                        imgHeight = maxAvailableHeight - 2;
+                        imgWidth = (img.width / img.height) * imgHeight;
+                    }
+                    // if still too wide, scale down
+                    if (imgWidth > maxWidth) {
+                        imgWidth = maxWidth;
+                        imgHeight = (img.height / img.width) * imgWidth;
+                    }
+
+                    doc.addImage(base64, 'JPEG', margin, y, imgWidth, imgHeight, undefined, 'FAST');
+                    y += imgHeight + 2;
+                    doc.setFontSize(8);
+                    doc.setTextColor(100,140,150);
+                    doc.text('(screenshot embedded above)', margin, y-1);
+                } else {
+                    writeLine('No screenshot file uploaded.', 9, 2);
+                }
+
+                // footer (if room, else small adjustment)
+                doc.setFontSize(8);
+                doc.setTextColor(120,140,150);
+                doc.text('EEZG 612 – single‑page report', margin, 285);
+
+                doc.save(`EEZG612_${name.replace(/\s/g,'_')||'student'}_singlepage.pdf`);
+
+            } catch (error) {
+                console.error('PDF error:', error);
+                alert('Error generating PDF. See console.');
+            } finally {
+                spinner.style.display = 'none';
+                generateBtn.disabled = false;
+            }
+        });
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function getImageDimensions(base64) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve({ width: img.width, height: img.height });
+                img.onerror = reject;
+                img.src = base64;
+            });
+        }
+    })();
+</script>
+</body>
+</html>
