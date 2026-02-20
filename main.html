@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIS assignment · EEZG 612 (single page)</title>
+    <title>GIS assignment · EEZG 612 (single page · folder link)</title>
     <!-- pdf generation library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- minimal style -->
@@ -116,26 +116,42 @@
         .flex-row .field {
             flex: 1 1 170px;
         }
-        .gpkg-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            background: #f2f7f9;
-            padding: 18px 18px 8px 18px;
+        /* New style for the drive link box (replaces previous gpkg rows) */
+        .drive-link-box {
+            background: #f0f7fa;
             border-radius: 26px;
-            margin: 10px 0;
+            padding: 22px 25px;
+            margin: 15px 0 10px 0;
+            border: 2px solid #5fa3b0;
+            box-shadow: 0 2px 8px rgba(0,60,70,0.1);
         }
-        .gpkg-item {
-            flex: 1 1 200px;
+        .drive-link-box label {
+            font-weight: 700;
+            color: #0f4d59;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .gpkg-item label {
-            font-size: 0.9rem;
+        .drive-link-box label span {
+            background: #0b6b7a;
+            color: white;
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 40px;
         }
         .drive-hint {
-            font-size: 0.8rem;
-            color: #3d6e79;
-            margin-top: 3px;
-            word-break: break-all;
+            font-size: 0.9rem;
+            color: #1f5e6b;
+            margin-top: 16px;
+            background: #e2f0f3;
+            padding: 12px 20px;
+            border-radius: 40px;
+            border-left: 5px solid #1e7e83;
+        }
+        .drive-hint strong {
+            color: #07424b;
         }
         .file-upload-box {
             background: #f1f7f9;
@@ -239,7 +255,7 @@
     <div id="formContainer">
         <div class="section-title">✏️ 1. Entries</div>
         <div class="field-grid">
-            <div class="field"><label>Full name</label> <input type="text" id="fullName" placeholder="e.g. Aditya "></div>
+            <div class="field"><label>Full name</label> <input type="text" id="fullName" placeholder="e.g. Aditya"></div>
             <div class="field"><label>ID number</label> <input type="text" id="idNumber" placeholder="2025ht0000"></div>
             <div class="field"><label>Email</label> <input type="email" id="email" placeholder="student@wilp.bits-pilani.ac.in"></div>
             <div class="field"><label>Phone number (optional)</label> <input type="tel" id="phone" placeholder="+91 8464050703"></div>
@@ -264,19 +280,27 @@
             </div>
         </div>
 
-        <!-- section 3: links with updated headings (projected / buffered) -->
-        <div class="section-title">🔗 3. Drive links (.gpkg files)</div>
-        <div class="gpkg-row">
-            <div class="gpkg-item"><label>📍 Projected point feature (.gpkg)</label> <input type="url" id="pointLink" placeholder="https://drive.google.com/..."></div>
-            <div class="gpkg-item"><label>📐 Projected line feature (.gpkg)</label> <input type="url" id="lineLink" placeholder="https://drive.google.com/..."></div>
-            <div class="gpkg-item"><label>🗺️ Projected polygon feature (.gpkg)</label> <input type="url" id="polygonLink" placeholder="https://drive.google.com/..."></div>
+        <!-- ========== MODIFIED SECTION: SINGLE DRIVE LINK FOR ZIP FOLDER ========== -->
+        <div class="section-title">📦 3. Project folder (zip) – Google Drive link</div>
+        <div class="drive-link-box">
+            <label>
+                <span>🔗 ONLY GOOGLE DRIVE LINKS ACCEPTED</span>
+            </label>
+            <input type="url" id="driveFolderLink" placeholder="https://drive.google.com/file/d/.../view?usp=sharing" style="background: white;">
+            <div style="margin-top: 16px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <span style="background: #0b5f6b; color: white; padding: 5px 18px; border-radius: 40px; font-size: 0.9rem;">⛔ RESTRICTION REMOVED</span>
+                <span style="color: #1b4f59;">👉 make sure it's public (anyone with link)</span>
+            </div>
         </div>
-        <!-- new fourth link: buffered roads -->
-        <div class="gpkg-row" style="margin-top: 0;">
-            <div class="gpkg-item" style="flex: 1 1 200px;"><label>🛣️ Buffered roads (.gpkg)</label> <input type="url" id="bufferedRoadsLink" placeholder="https://drive.google.com/..."></div>
-        </div>
-        <div class="drive-hint">ⓘ Paste direct Google Drive share links (anyone with link)</div>
 
+        <!-- instructions: zip + share -->
+        <div class="drive-hint">
+            <strong>📌 INSTRUCTIONS :</strong> 
+            Zip your working folder (containing .gpkg files, screenshots, etc.) and upload to Google Drive. 
+            Paste the share link above. <strong style="background:#f9e7b2; padding:3px 12px; border-radius:30px;">🔓 Don't forget to remove restriction — set to "Anyone with the link"</strong>
+        </div>
+
+        <!-- section 4 remains screenshot (unchanged) -->
         <div class="section-title">📸 4. Work screenshot (embedded)</div>
         <div class="file-upload-box">
             <label for="screenshotUpload">Choose screenshot (PNG or JPG)</label>
@@ -297,7 +321,7 @@
             <button class="btn btn-outline" id="clearBtn" type="button">⟲ Clear fields</button>
         </div>
         <div class="small-note">
-            ⚡ Make Sure that your links are given access, so that the instructor can download the files.
+            ⚡ Double‑check: your Google Drive link is shareable (anyone with link). The link should point to the zipped working folder.
         </div> 
     </div>
     <footer>EEZG 612  Assignment 1</footer>
@@ -358,11 +382,8 @@
             document.getElementById('waterArea').value = '';
             document.getElementById('roadLength').value = '';
             document.getElementById('pointCount').value = '';
-            document.getElementById('pointLink').value = '';
-            document.getElementById('lineLink').value = '';
-            document.getElementById('polygonLink').value = '';
-            // new buffered roads
-            document.getElementById('bufferedRoadsLink').value = '';
+            // Clear the single drive link
+            document.getElementById('driveFolderLink').value = '';
             fileInput.value = '';
             uploadStatus.textContent = 'No file chosen';
             geoYes.checked = true;
@@ -370,7 +391,7 @@
             toggleGeoConditional(); // ensures UTM visible
         });
 
-        // ---------- SINGLE‑PAGE PDF (everything compact) ----------
+        // ---------- SINGLE‑PAGE PDF (compact, with drive link) ----------
         generateBtn.addEventListener('click', async function() {
             spinner.style.display = 'inline-block';
             generateBtn.disabled = true;
@@ -389,11 +410,8 @@
                 const roads = document.getElementById('roadLength').value.trim() || '—';
                 const points = document.getElementById('pointCount').value.trim() || '—';
 
-                // links with new naming
-                const pointLink = document.getElementById('pointLink').value.trim() || '—';
-                const lineLink = document.getElementById('lineLink').value.trim() || '—';
-                const polygonLink = document.getElementById('polygonLink').value.trim() || '—';
-                const bufferedLink = document.getElementById('bufferedRoadsLink').value.trim() || '—';
+                // MODIFIED: single drive link for the zipped folder
+                const driveLink = document.getElementById('driveFolderLink').value.trim() || '—';
 
                 const today = new Date();
                 const dateStr = `${today.getDate()} ${today.toLocaleString('default', { month: 'short' })} ${today.getFullYear()}`;
@@ -470,18 +488,28 @@
                 }
                 y += 1;
 
-                // ----- 3. GOOGLE DRIVE LINKS (updated headings) -----
+                // ----- 3. GOOGLE DRIVE LINK (ZIPPED FOLDER) – UPDATED -----
                 doc.setFontSize(11);
                 doc.setFont('helvetica', 'bold');
-                doc.text('3. GOOGLE DRIVE LINKS (.gpkg)', margin, y);
+                doc.text('3. PROJECT ZIP – GOOGLE DRIVE LINK', margin, y);
                 y += 4.5;
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(9);
-                writeLine(`- Projected point feature   : ${pointLink}`, 9, 2);
-                writeLine(`- Projected line feature    : ${lineLink}`, 9, 2);
-                writeLine(`- Projected polygon feature  : ${polygonLink}`, 9, 2);
-                writeLine(`- Buffered roads             : ${bufferedLink}`, 9, 2);
-                y += 1;
+                writeLine(`🔗 Drive link (zipped working folder) :`, 9, 2);
+                // force line break for long links
+                const linkText = `${driveLink}`;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9);
+                const splitLink = doc.splitTextToSize(linkText, maxWidth - 6);
+                doc.text(splitLink, margin + 4, y);
+                y += splitLink.length * 3.2 + 1;
+                
+                // Add a note about restriction removed
+                doc.setFontSize(8.5);
+                doc.setTextColor(30, 100, 110);
+                doc.text('✅ Restriction removed — anyone with link can access', margin, y);
+                y += 5;
+                doc.setTextColor(20, 20, 20);
 
                 // ----- 4. SCREENSHOT (with filename) -----
                 doc.setFontSize(11);
@@ -528,9 +556,9 @@
                 // footer (if room, else small adjustment)
                 doc.setFontSize(8);
                 doc.setTextColor(120,140,150);
-                doc.text('EEZG 612 – single‑page report', margin, 285);
+                doc.text('EEZG 612 – single‑page report (folder link mode)', margin, 285);
 
-                doc.save(`EEZG612_${name.replace(/\s/g,'_')||'student'}_singlepage.pdf`);
+                doc.save(`EEZG612_${name.replace(/\s/g,'_')||'student'}_folderlink.pdf`);
 
             } catch (error) {
                 console.error('PDF error:', error);
